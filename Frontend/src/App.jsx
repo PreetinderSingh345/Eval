@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
-import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
   ERROR_ROUTE,
   SIGNUP_ROUTE,
@@ -13,8 +13,8 @@ import {
   PageNotFound,
   SignupPage,
   LoginPage,
-  ContentFields,
-  ContentEntries,
+  ContentFieldsPage,
+  ContentEntriesPage,
 } from './pages';
 
 function App() {
@@ -37,10 +37,10 @@ function App() {
 
         {isAuthenticated && (
           <>
-            <Route path={CONTENT_FIELDS} element={<ContentFields />} />
+            <Route path={CONTENT_FIELDS} element={<ContentFieldsPage />} />
             <Route
               path={`${CONTENT_ENTRIES}/:contentId`}
-              element={<ContentEntries />}
+              element={<ContentEntriesPage />}
             />
           </>
         )}

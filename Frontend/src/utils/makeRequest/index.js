@@ -17,7 +17,7 @@ const makeRequest = async (
         url: apiEndPoint.url,
         method: apiEndPoint.method,
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: token,
         },
         ...dynamicConfig,
       };
