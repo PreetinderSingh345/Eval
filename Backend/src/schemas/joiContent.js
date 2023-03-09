@@ -21,7 +21,7 @@ const getContentEntriesSchema = joi.object({
 const deleteContentEntrySchema = joi.object({
   contentId: joi.string().required(),
   entryId: joi.string().required(),
-});
+}); 
 
 module.exports = {
   createContentSchema,
