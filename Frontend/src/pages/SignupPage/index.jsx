@@ -1,17 +1,8 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Header, Signup, Footer } from '../../components';
+import { Signup } from '../../components';
 
 function SignupPage() {
-  const navigate = useNavigate();
-
-  return (
-    <>
-      <Header />
-      <Signup />
-      <Footer />
-    </>
-  );
+  return <Signup />;
 }
 
 export default SignupPage;

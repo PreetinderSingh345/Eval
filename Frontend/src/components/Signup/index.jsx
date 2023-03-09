@@ -6,7 +6,7 @@ import makeRequest from '../../utils/makeRequest';
 
 function Signup() {
   const [formData, setFormData] = useState({ email: '', password: '' });
-  const [formResponse, setFormResponse] = useState('');
+  const [formResponse, setFormResponse] = useState('Please Sign Up');
 
   const handleChange = (event) => {
     setFormData({ ...formData, [event.target.name]: event.target.value });
@@ -22,7 +22,7 @@ function Signup() {
 
       console.log(response);
 
-      setFormResponse(response);
+      setFormResponse('Signed Up Successfully');
     } catch (error) {
       console.error(error.message);
     }
@@ -54,7 +54,7 @@ function Signup() {
         <button type="submit">Signup</button>
       </form>
 
-      <p>Hi there</p>
+      <p>{formResponse}</p>
     </>
   );
 }

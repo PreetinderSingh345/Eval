@@ -6,7 +6,7 @@ import makeRequest from '../../utils/makeRequest';
 
 function Login() {
   const [formData, setFormData] = useState({ email: '', password: '' });
-  const [formResponse, setFormResponse] = useState('');
+  const [formResponse, setFormResponse] = useState('Please Login');
 
   const handleChange = (event) => {
     setFormData({ ...formData, [event.target.name]: event.target.value });
@@ -24,7 +24,7 @@ function Login() {
 
       localStorage.setItem('token', response);
 
-      setFormResponse(response);
+      setFormResponse('Logged In Successfully');
     } catch (error) {
       console.error(error.message);
     }
@@ -56,7 +56,7 @@ function Login() {
         <button type="submit">Login</button>
       </form>
 
-      <p>Hi there</p>
+      <p>{formResponse}</p>
     </>
   );
 }
