@@ -3,21 +3,21 @@ const jwt = require("jsonwebtoken");
 const { User } = require("../../database/models");
 const { insertInRedis } = require("../utils/redis");
 
-const addUser = async (username, password) => {
+const addUser = async (email, password) => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const user = await User.create({
-    username,
+    email,
     password: hashedPassword,
   });
 
   return user;
 };
 
-const loginUser = async (username, password) => {
+const loginUser = async (email, password) => {
   const user = await User.findOne({
     where: {
-      username,
+      email,
     },
   });
 
@@ -29,7 +29,7 @@ const loginUser = async (username, password) => {
     throw new Error("Invalid password");
   }
 
-  const token = jwt.sign(username, process.env.TOKEN_SECRET);
+  const token = jwt.sign(email, process.env.TOKEN_SECRET);
 
   await insertInRedis(token);
 

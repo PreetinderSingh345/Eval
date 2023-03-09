@@ -1,19 +1,42 @@
 import axios from 'axios';
-import { BACKEND_URL } from '../../constants/apiEndPoints';
 import { ERROR_ROUTE } from '../../constants/routes';
 
-const makeRequest = async (apiEndPoint, dynamicConfig = {}, navigate) => {
+const makeRequest = async (
+  baseURL,
+  tokenValidate,
+  apiEndPoint,
+  dynamicConfig = {},
+  navigate
+) => {
   try {
-    const requestDetails = {
-      baseURL: BACKEND_URL,
-      url: apiEndPoint.url,
-      method: apiEndPoint.method,
-      ...dynamicConfig,
-    };
+    if (tokenValidate) {
+      const token = localStorage.getItem('token');
 
-    const { data } = await axios(requestDetails);
+      const requestDetails = {
+        baseURL,
+        url: apiEndPoint.url,
+        method: apiEndPoint.method,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        ...dynamicConfig,
+      };
 
-    return data;
+      const { data } = await axios(requestDetails);
+
+      return data;
+    } else {
+      const requestDetails = {
+        baseURL,
+        url: apiEndPoint.url,
+        method: apiEndPoint.method,
+        ...dynamicConfig,
+      };
+
+      const { data } = await axios(requestDetails);
+
+      return data;
+    }
   } catch (error) {
     if (navigate) {
       const errorStatus = error.response?.status;

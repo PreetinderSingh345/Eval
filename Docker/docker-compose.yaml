@@ -7,7 +7,7 @@ services:
     ports:
       - 6379:6379
 
-  database:
+  database-backend:
     image: postgres:latest
     restart: always
     environment:
@@ -16,6 +16,26 @@ services:
       POSTGRES_DB: postgres
     ports:
       - 5433:5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  database-auth:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - 5434:5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   server:
     build:
@@ -25,7 +45,7 @@ services:
     ports:
       - 4000:4000
     environment:
-      DB_HOST: database
+      DB_HOST: database-backend
       DB_USER: postgres
       DB_PASSWORD: password
       DB_NAME: postgres
@@ -37,12 +57,12 @@ services:
       context: ../Backend
       dockerfile: Dockerfile.migration
     environment:
-      DB_HOST: database
+      DB_HOST: database-backend
       DB_USER: postgres
       DB_PASSWORD: password
       DB_NAME: postgres
     depends_on:
-      - database
+      - database-backend
 
   frontend:
     build:
@@ -58,7 +78,7 @@ services:
     ports:
       - 5000:5000
     environment:
-      DB_HOST: database
+      DB_HOST: database-auth
       DB_USER: postgres
       DB_PASSWORD: password
       DB_NAME: postgres
@@ -70,9 +90,9 @@ services:
       context: ../Auth
       dockerfile: Dockerfile.migration
     environment:
-      DB_HOST: database
+      DB_HOST: database-auth
       DB_USER: postgres
       DB_PASSWORD: password
       DB_NAME: postgres
     depends_on:
-      - database
+      - database-auth

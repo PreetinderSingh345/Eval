@@ -2,7 +2,7 @@ const { createClient } = require("redis");
 
 const config = {
   socket: {
-    host: "docker.for.mac.localhost",
+    host: "redis",
   },
 };
 
