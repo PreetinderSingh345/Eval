@@ -6,7 +6,6 @@ import {
   ERROR_ROUTE,
   SIGNUP_ROUTE,
   LOGIN_ROUTE,
-  GET_EMPLOYEE_BY_ID_ROUTE,
 } from './constants/routes';
 import { Error, Home, PageNotFound, SignupPage, LoginPage } from './pages';
 

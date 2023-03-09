@@ -3,7 +3,6 @@ import './Signup.css';
 import { AUTH_URL } from '../../constants/apiEndPoints';
 import { SIGNUP } from '../../constants/apiEndPoints';
 import makeRequest from '../../utils/makeRequest';
-import { LOGIN_ROUTE } from '../../constants/routes';
 
 function Signup() {
   const [formData, setFormData] = useState({ email: '', password: '' });
