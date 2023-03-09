@@ -41,12 +41,19 @@ const createContentEntry = async (contentId, entry) => {
 
   const id = uuidv4();
 
-  const updatedContent = await content.update({
-    entries: {
-      ...content.entries,
-      [id]: entry,
+  const updatedContent = await Content.update(
+    {
+      entries: {
+        ...content.entries,
+        [id]: entry,
+      },
     },
-  });
+    {
+      where: {
+        id: contentId,
+      },
+    }
+  );
 
   return updatedContent;
 };
@@ -84,9 +91,16 @@ const deleteContentEntry = async (contentId, entryId) => {
     return acc;
   }, {});
 
-  const updatedContent = await content.update({
-    entries,
-  });
+  const updatedContent = await Content.update(
+    {
+      entries,
+    },
+    {
+      where: {
+        id: contentId,
+      },
+    }
+  );
 
   return updatedContent;
 };
