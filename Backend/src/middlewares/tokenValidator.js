@@ -21,7 +21,6 @@ const tokenValidator = async (req, res, next) => {
 
     next();
   } catch (error) {
-    console.log("in error of backend", error);
     if (error instanceof HttpError) {
       res.status(error.statusCode).send(error.message);
     } else {
