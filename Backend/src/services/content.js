@@ -33,6 +33,32 @@ const createContentField = async (contentId, field) => {
     }
   );
 
+  if (content.entries) {
+    const updatedEntries = Object.keys(content.entries).reduce(
+      (acc, key) => ({
+        ...acc,
+        [key]: {
+          ...content.entries[key],
+          [field]: "",
+        },
+      }),
+      {}
+    );
+
+    const updatedContent = await Content.update(
+      {
+        entries: updatedEntries,
+      },
+      {
+        where: {
+          id: contentId,
+        },
+      }
+    );
+
+    return updatedContent;
+  }
+
   return updatedContent;
 };
 
@@ -100,6 +126,36 @@ const deleteContentField = async (contentId, field) => {
       },
     }
   );
+
+  // if (content.entries) {
+  //   const updatedEntries = Object.keys(content.entries).reduce(
+  //     (acc, key) => ({
+  //       ...acc,
+
+  //       [key]: Object.keys(content.entries[key]).reduce((acc, key2) => {
+  //         if (key2 !== field) {
+  //           acc[key2] = content.entries[key][key2];
+  //         }
+
+  //         return acc;
+  //       }, {}),
+  //     }),
+  //     {}
+  //   );
+
+  //   const updatedContent = await Content.update(
+  //     {
+  //       entries: updatedEntries,
+  //     },
+  //     {
+  //       where: {
+  //         id: contentId,
+  //       },
+  //     }
+  //   );
+
+  //   return updatedContent;
+  // }
 
   return updatedContent;
 };
@@ -197,6 +253,8 @@ const deleteContentEntry = async (contentId, entryId) => {
     return acc;
   }, {});
 
+  console.log("entries", entries);
+
   const updatedContent = await Content.update(
     {
       entries,
@@ -207,6 +265,8 @@ const deleteContentEntry = async (contentId, entryId) => {
       },
     }
   );
+
+  console.log("updatedContent", updatedContent);
 
   return updatedContent;
 };

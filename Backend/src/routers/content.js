@@ -10,25 +10,28 @@ contentRouter.get("/contents", tokenValidator, contentController.getContents);
 contentRouter.post(
   "/createContent",
   tokenValidator,
-  // contentValidator.createContentValidator,
+  contentValidator.createContentValidator,
   contentController.createContent
 );
 
 contentRouter.post(
   "/createContentField/:contentId",
   tokenValidator,
+  contentValidator.createContentFieldValidator,
   contentController.createContentField
 );
 
 contentRouter.put(
   "/updateContentField/:contentId",
   tokenValidator,
+  contentValidator.updateContentFieldValidator,
   contentController.updateContentField
 );
 
 contentRouter.delete(
   "/deleteContentField/:contentId/:field",
   tokenValidator,
+  contentValidator.deleteContentFieldValidator,
   contentController.deleteContentField
 );
 
@@ -42,6 +45,7 @@ contentRouter.post(
 contentRouter.put(
   "/updateContentEntry/:contentId/:entryId",
   tokenValidator,
+  contentValidator.updateContentEntryValidator,
   contentController.updateContentEntry
 );
 

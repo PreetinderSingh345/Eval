@@ -7,6 +7,25 @@ describe("createContent", () => {
     const mockResolvedValue = {
       id: "1",
       name: "name",
+      fields: {},
+      entries: {},
+    };
+
+    jest.spyOn(Content, "create").mockResolvedValue(mockResolvedValue);
+
+    const content = await contentService.createContent({
+      name: "name",
+    });
+
+    expect(content).toEqual(mockResolvedValue);
+  });
+});
+
+describe("createContentField", () => {
+  it("should create a content field", async () => {
+    const mockResolvedValueFindOne = {
+      id: "1",
+      name: "name",
       fields: {
         field1: "type1",
         field2: "type2",
@@ -14,14 +33,122 @@ describe("createContent", () => {
       entries: {},
     };
 
-    jest.spyOn(Content, "create").mockResolvedValue(mockResolvedValue);
+    jest.spyOn(Content, "findOne").mockResolvedValue(mockResolvedValueFindOne);
 
-    const content = await contentService.createContent("name", {
-      field1: "type1",
-      field2: "type2",
-    });
+    const mockResolvedValueUpdate = [1];
 
-    expect(content).toEqual(mockResolvedValue);
+    jest.spyOn(Content, "update").mockResolvedValue(mockResolvedValueUpdate);
+
+    const content = await contentService.createContentField("1", "field3");
+
+    expect(content).toEqual(mockResolvedValueUpdate);
+  });
+
+  it("should create a content field and update the entries", async () => {
+    const mockResolvedValueFindOne = {
+      id: "1",
+      name: "name",
+      fields: {
+        field1: "type1",
+        field2: "type2",
+      },
+      entries: {
+        entry1: {
+          field1: "value1",
+          field2: "value2",
+        },
+        entry2: {
+          field1: "value1",
+          field2: "value2",
+        },
+      },
+    };
+
+    jest.spyOn(Content, "findOne").mockResolvedValue(mockResolvedValueFindOne);
+
+    const mockResolvedValueUpdate = [1];
+
+    jest.spyOn(Content, "update").mockResolvedValue(mockResolvedValueUpdate);
+
+    const content = await contentService.createContentField("1", "field3");
+
+    expect(content).toEqual(mockResolvedValueUpdate);
+  });
+
+  it("should throw an error if the content does not exist", async () => {
+    jest.spyOn(Content, "findOne").mockResolvedValue(null);
+
+    await expect(
+      contentService.createContentField("1", "field3")
+    ).rejects.toThrow(new HttpError(404, "Content not found"));
+  });
+});
+
+describe("updateContentField", () => {
+  it("should update a content field", async () => {
+    const mockResolvedValueFindOne = {
+      id: "1",
+      name: "name",
+      fields: {
+        field1: "type1",
+        field2: "type2",
+      },
+      entries: {},
+    };
+
+    jest.spyOn(Content, "findOne").mockResolvedValue(mockResolvedValueFindOne);
+
+    const mockResolvedValueUpdate = [1];
+
+    jest.spyOn(Content, "update").mockResolvedValue(mockResolvedValueUpdate);
+
+    const content = await contentService.updateContentField(
+      "1",
+      "field1",
+      "type3"
+    );
+
+    expect(content).toEqual(mockResolvedValueUpdate);
+  });
+
+  it("should throw an error if the content does not exist", async () => {
+    jest.spyOn(Content, "findOne").mockResolvedValue(null);
+
+    await expect(
+      contentService.updateContentField("1", "field1", "type3")
+    ).rejects.toThrow(new HttpError(404, "Content not found"));
+  });
+});
+
+describe("deleteContentField", () => {
+  it("should delete a content field", async () => {
+    const mockResolvedValueFindOne = {
+      id: "1",
+      name: "name",
+      fields: {
+        field1: "type1",
+        field2: "type2",
+      },
+      entries: {},
+    };
+
+    jest.spyOn(Content, "findOne").mockResolvedValue(mockResolvedValueFindOne);
+
+    const mockResolvedValueUpdate = [1];
+
+    jest.spyOn(Content, "update").mockResolvedValue(mockResolvedValueUpdate);
+
+    const content = await contentService.deleteContentField("1", "field1");
+
+    expect(content).toEqual(mockResolvedValueUpdate);
+  });
+
+  it("should throw an error if the content does not exist", async () => {
+    jest.spyOn(Content, "findOne").mockResolvedValue(null);
+
+    await expect(
+      contentService.deleteContentField("1", "field1")
+    ).rejects.toThrow(new HttpError(404, "Content not found"));
   });
 });
 
@@ -53,31 +180,6 @@ describe("getContents", () => {
     const contents = await contentService.getContents();
 
     expect(contents).toEqual(mockResolvedValue);
-  });
-});
-
-describe("getContentsFields", () => {
-  it("should get all the fields of the content", async () => {
-    const mockResolvedValue = {
-      fields: {
-        firstName: "string",
-        lastName: "string,",
-      },
-    };
-
-    jest.spyOn(Content, "findOne").mockResolvedValue(mockResolvedValue);
-
-    const fields = await contentService.getContentFields("1");
-
-    expect(fields).toEqual(mockResolvedValue.fields);
-  });
-
-  it("should throw an error if the content does not exist", async () => {
-    jest.spyOn(Content, "findOne").mockResolvedValue(null);
-
-    await expect(contentService.getContentFields("1")).rejects.toThrow(
-      new HttpError(404, "Content not found")
-    );
   });
 });
 
@@ -126,35 +228,53 @@ describe("creteContentEntry", () => {
   });
 });
 
-describe("getContentEntries", () => {
-  it("should get all the entries of the content", async () => {
-    const mockResolvedValue = {
+describe("updateContentEntry", () => {
+  it("should update a content entry", async () => {
+    const mockResolvedValueFindOne = {
+      id: "1",
+      name: "name",
+      fields: {
+        field1: "type1",
+        field2: "type2",
+      },
       entries: {
         1: {
-          field1: "value1",
-          field2: "value2",
-        },
-
-        2: {
           field1: "value1",
           field2: "value2",
         },
       },
     };
 
-    jest.spyOn(Content, "findOne").mockResolvedValue(mockResolvedValue);
+    jest.spyOn(Content, "findOne").mockResolvedValue(mockResolvedValueFindOne);
 
-    const entries = await contentService.getContentEntries("1");
+    const mockResolvedValueUpdate = {
+      entries: {
+        1: {
+          field1: "value1",
+          field2: "value2",
+        },
+      },
+    };
 
-    expect(entries).toEqual(mockResolvedValue.entries);
+    jest.spyOn(Content, "update").mockResolvedValue(mockResolvedValueUpdate);
+
+    const updatedContent = await contentService.updateContentEntry("1", "1", {
+      field1: "value1",
+      field2: "value2",
+    });
+
+    expect(updatedContent).toEqual(mockResolvedValueUpdate);
   });
 
   it("should throw an error if the content does not exist", async () => {
     jest.spyOn(Content, "findOne").mockResolvedValue(null);
 
-    await expect(contentService.getContentEntries("1")).rejects.toThrow(
-      new HttpError(404, "Content not found")
-    );
+    await expect(
+      contentService.updateContentEntry("1", "1", {
+        field1: "value1",
+        field2: "value2",
+      })
+    ).rejects.toThrow(new HttpError(404, "Content not found"));
   });
 });
 

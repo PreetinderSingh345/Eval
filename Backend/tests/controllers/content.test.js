@@ -7,10 +7,7 @@ describe("createContent", () => {
     const mockResolvedValue = {
       id: "1",
       name: "name",
-      fields: {
-        field1: "type1",
-        field2: "type2",
-      },
+      fields: {},
       entries: {},
     };
 
@@ -21,10 +18,6 @@ describe("createContent", () => {
     const mockReq = {
       body: {
         name: "name",
-        fields: {
-          field1: "type1",
-          field2: "type2",
-        },
       },
     };
 
@@ -47,10 +40,6 @@ describe("createContent", () => {
     const mockReq = {
       body: {
         name: "name",
-        fields: {
-          field1: "type1",
-          field2: "type2",
-        },
       },
     };
 
@@ -66,26 +55,208 @@ describe("createContent", () => {
   });
 });
 
+describe("createContentField", () => {
+  it("should create a content field", async () => {
+    const mockResolvedValue = [1];
+
+    jest
+      .spyOn(contentService, "createContentField")
+      .mockResolvedValue(mockResolvedValue);
+
+    const mockReq = {
+      params: {
+        contentId: "1",
+      },
+      body: {
+        field: "field3",
+      },
+    };
+
+    const mockRes = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    await contentController.createContentField(mockReq, mockRes);
+
+    expect(mockRes.status).toHaveBeenCalledWith(200);
+    expect(mockRes.json).toHaveBeenCalledWith(mockResolvedValue);
+  });
+
+  it("should throw a 500 error when there is an unexpected error", async () => {
+    jest
+      .spyOn(contentService, "createContentField")
+      .mockRejectedValue(new Error("error"));
+
+    const mockReq = {
+      params: {
+        contentId: "1",
+      },
+      body: {
+        field: "field3",
+      },
+    };
+
+    const mockRes = {
+      status: jest.fn().mockReturnThis(),
+      send: jest.fn(),
+    };
+
+    await contentController.createContentField(mockReq, mockRes);
+
+    expect(mockRes.status).toHaveBeenCalledWith(500);
+    expect(mockRes.send).toHaveBeenCalledWith("error");
+  });
+});
+
+describe("updateContentField", () => {
+  it("should update a content field", async () => {
+    const mockResolvedValue = [1];
+
+    jest
+      .spyOn(contentService, "updateContentField")
+      .mockResolvedValue(mockResolvedValue);
+
+    const mockReq = {
+      params: {
+        contentId: "1",
+      },
+      body: {
+        prevFieldValue: "field1",
+        newFieldValue: "field3",
+      },
+    };
+
+    const mockRes = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    await contentController.updateContentField(mockReq, mockRes);
+
+    expect(mockRes.status).toHaveBeenCalledWith(200);
+    expect(mockRes.json).toHaveBeenCalledWith(mockResolvedValue);
+  });
+
+  it("should throw a 500 error when there is an unexpected error", async () => {
+    jest
+      .spyOn(contentService, "updateContentField")
+      .mockRejectedValue(new Error("error"));
+
+    const mockReq = {
+      params: {
+        contentId: "1",
+      },
+      body: {
+        prevFieldValue: "field1",
+        newFieldValue: "field3",
+      },
+    };
+
+    const mockRes = {
+      status: jest.fn().mockReturnThis(),
+      send: jest.fn(),
+    };
+
+    await contentController.updateContentField(mockReq, mockRes);
+
+    expect(mockRes.status).toHaveBeenCalledWith(500);
+    expect(mockRes.send).toHaveBeenCalledWith("error");
+  });
+});
+
+describe("deleteContentField", () => {
+  it("should delete a content field", async () => {
+    const mockResolvedValue = [1];
+
+    jest
+      .spyOn(contentService, "deleteContentField")
+      .mockResolvedValue(mockResolvedValue);
+
+    const mockReq = {
+      params: {
+        contentId: "1",
+      },
+      body: {
+        field: "field1",
+      },
+    };
+
+    const mockRes = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    await contentController.deleteContentField(mockReq, mockRes);
+
+    expect(mockRes.status).toHaveBeenCalledWith(200);
+    expect(mockRes.json).toHaveBeenCalledWith(mockResolvedValue);
+  });
+
+  it("should throw a 500 error when there is an unexpected error", async () => {
+    jest
+      .spyOn(contentService, "deleteContentField")
+      .mockRejectedValue(new Error("error"));
+
+    const mockReq = {
+      params: {
+        contentId: "1",
+      },
+      body: {
+        field: "field1",
+      },
+    };
+
+    const mockRes = {
+      status: jest.fn().mockReturnThis(),
+      send: jest.fn(),
+    };
+
+    await contentController.deleteContentField(mockReq, mockRes);
+
+    expect(mockRes.status).toHaveBeenCalledWith(500);
+    expect(mockRes.send).toHaveBeenCalledWith("error");
+  });
+});
+
 describe("getContents", () => {
-  it("should get all the contents", async () => {
+  it("should get all contents", async () => {
     const mockResolvedValue = [
       {
         id: "1",
-        name: "name1",
+        name: "name",
         fields: {
           field1: "type1",
           field2: "type2",
         },
-        entries: {},
+        entries: {
+          entry1: {
+            field1: "value1",
+            field2: "value2",
+          },
+          entry2: {
+            field1: "value1",
+            field2: "value2",
+          },
+        },
       },
       {
         id: "2",
-        name: "name2",
+        name: "name",
         fields: {
           field1: "type1",
           field2: "type2",
         },
-        entries: {},
+        entries: {
+          entry1: {
+            field1: "value1",
+            field2: "value2",
+          },
+          entry2: {
+            field1: "value1",
+            field2: "value2",
+          },
+        },
       },
     ];
 
@@ -94,7 +265,6 @@ describe("getContents", () => {
       .mockResolvedValue(mockResolvedValue);
 
     const mockReq = {};
-
     const mockRes = {
       status: jest.fn().mockReturnThis(),
       json: jest.fn(),
@@ -112,91 +282,12 @@ describe("getContents", () => {
       .mockRejectedValue(new Error("error"));
 
     const mockReq = {};
-
     const mockRes = {
       status: jest.fn().mockReturnThis(),
       send: jest.fn(),
     };
 
     await contentController.getContents(mockReq, mockRes);
-
-    expect(mockRes.status).toHaveBeenCalledWith(500);
-    expect(mockRes.send).toHaveBeenCalledWith("error");
-  });
-});
-
-describe("getContentFields", () => {
-  it("should get all the fields of a content", async () => {
-    const mockResolvedValue = {
-      id: "1",
-      name: "name",
-      fields: {
-        field1: "type1",
-        field2: "type2",
-      },
-      entries: {},
-    };
-
-    jest
-      .spyOn(contentService, "getContentFields")
-      .mockResolvedValue(mockResolvedValue.fields);
-
-    const mockReq = {
-      params: {
-        contentId: "1",
-      },
-    };
-
-    const mockRes = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-    };
-
-    await contentController.getContentFields(mockReq, mockRes);
-
-    expect(mockRes.status).toHaveBeenCalledWith(200);
-    expect(mockRes.json).toHaveBeenCalledWith(mockResolvedValue.fields);
-  });
-
-  it("should throw a 404 error when the content does not exist", async () => {
-    jest.spyOn(contentService, "getContentFields").mockImplementation(() => {
-      throw new HttpError(404, "Content not found");
-    });
-
-    const mockReq = {
-      params: {
-        contentId: "1",
-      },
-    };
-
-    const mockRes = {
-      status: jest.fn().mockReturnThis(),
-      send: jest.fn(),
-    };
-
-    await contentController.getContentFields(mockReq, mockRes);
-
-    expect(mockRes.status).toHaveBeenCalledWith(404);
-    expect(mockRes.send).toHaveBeenCalledWith("Content not found");
-  });
-
-  it("should throw a 500 error when there is an unexpected error", async () => {
-    jest
-      .spyOn(contentService, "getContentFields")
-      .mockRejectedValue(new Error("error"));
-
-    const mockReq = {
-      params: {
-        contentId: "1",
-      },
-    };
-
-    const mockRes = {
-      status: jest.fn().mockReturnThis(),
-      send: jest.fn(),
-    };
-
-    await contentController.getContentFields(mockReq, mockRes);
 
     expect(mockRes.status).toHaveBeenCalledWith(500);
     expect(mockRes.send).toHaveBeenCalledWith("error");
@@ -306,8 +397,8 @@ describe("createContentEntry", () => {
   });
 });
 
-describe("getContentEntries", () => {
-  it("should get all the entries of a content", async () => {
+describe("updateContentEntry", () => {
+  it("should update a content entry", async () => {
     const mockResolvedValue = {
       id: "1",
       name: "name",
@@ -328,12 +419,18 @@ describe("getContentEntries", () => {
     };
 
     jest
-      .spyOn(contentService, "getContentEntries")
-      .mockResolvedValue(mockResolvedValue.entries);
+      .spyOn(contentService, "updateContentEntry")
+      .mockResolvedValue(mockResolvedValue);
 
     const mockReq = {
       params: {
         contentId: "1",
+        entryId: "entry1",
+      },
+
+      body: {
+        field1: "value1",
+        field2: "value2",
       },
     };
 
@@ -342,42 +439,26 @@ describe("getContentEntries", () => {
       json: jest.fn(),
     };
 
-    await contentController.getContentEntries(mockReq, mockRes);
+    await contentController.updateContentEntry(mockReq, mockRes);
 
     expect(mockRes.status).toHaveBeenCalledWith(200);
-    expect(mockRes.json).toHaveBeenCalledWith(mockResolvedValue.entries);
-  });
-
-  it("should throw a 404 error when the content does not exist", async () => {
-    jest.spyOn(contentService, "getContentEntries").mockImplementation(() => {
-      throw new HttpError(404, "Content not found");
-    });
-
-    const mockReq = {
-      params: {
-        contentId: "1",
-      },
-    };
-
-    const mockRes = {
-      status: jest.fn().mockReturnThis(),
-      send: jest.fn(),
-    };
-
-    await contentController.getContentEntries(mockReq, mockRes);
-
-    expect(mockRes.status).toHaveBeenCalledWith(404);
-    expect(mockRes.send).toHaveBeenCalledWith("Content not found");
+    expect(mockRes.json).toHaveBeenCalledWith(mockResolvedValue);
   });
 
   it("should throw a 500 error when there is an unexpected error", async () => {
     jest
-      .spyOn(contentService, "getContentEntries")
+      .spyOn(contentService, "updateContentEntry")
       .mockRejectedValue(new Error("error"));
 
     const mockReq = {
       params: {
         contentId: "1",
+        entryId: "entry1",
+      },
+
+      body: {
+        field1: "value1",
+        field2: "value2",
       },
     };
 
@@ -386,7 +467,7 @@ describe("getContentEntries", () => {
       send: jest.fn(),
     };
 
-    await contentController.getContentEntries(mockReq, mockRes);
+    await contentController.updateContentEntry(mockReq, mockRes);
 
     expect(mockRes.status).toHaveBeenCalledWith(500);
     expect(mockRes.send).toHaveBeenCalledWith("error");

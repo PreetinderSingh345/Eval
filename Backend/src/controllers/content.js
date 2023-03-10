@@ -3,9 +3,9 @@ const HttpError = require("../utils/errors/HttpError");
 
 const createContent = async (req, res) => {
   try {
-    const { name, fields } = req.body;
+    const { name } = req.body;
 
-    const content = await contentService.createContent({ name, fields });
+    const content = await contentService.createContent({ name });
 
     res.status(200).json(content);
   } catch (error) {

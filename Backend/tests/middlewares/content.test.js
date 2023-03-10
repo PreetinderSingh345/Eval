@@ -1,15 +1,10 @@
 const contentValidator = require("../../src/middlewares/contentValidator");
-const contentSchema = require("../../src/schemas/joiContent");
 
 describe("createContentValidator", () => {
-  it("validate and call next if name and fields are provided", () => {
+  it("validate and call next if name is provided", () => {
     const req = {
       body: {
         name: "name",
-        fields: {
-          field1: "type1",
-          field2: "type2",
-        },
       },
     };
 
@@ -27,12 +22,7 @@ describe("createContentValidator", () => {
 
   it("should throw a 400 error if name is not provided", () => {
     const req = {
-      body: {
-        fields: {
-          field1: "type1",
-          field2: "type2",
-        },
-      },
+      body: {},
     };
 
     const res = {
@@ -48,10 +38,10 @@ describe("createContentValidator", () => {
     expect(res.send).toHaveBeenCalledWith('"name" is required');
   });
 
-  it("should throw a 400 error if fields is not provided", () => {
+  it("should throw a 400 error if name is not a string", () => {
     const req = {
       body: {
-        name: "name",
+        name: 123,
       },
     };
 
@@ -65,7 +55,334 @@ describe("createContentValidator", () => {
     contentValidator.createContentValidator(req, res, next);
 
     expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.send).toHaveBeenCalledWith('"fields" is required');
+    expect(res.send).toHaveBeenCalledWith('"name" must be a string');
+  });
+
+  it("should throw a 500 error if an unexpected error occurs", () => {
+    const req = {
+      body: {
+        name: "name",
+      },
+    };
+
+    const res = {
+      status: jest.fn(() => res),
+      send: jest.fn(),
+    };
+
+    const next = jest.fn(() => {
+      throw new Error("Unexpected error");
+    });
+
+    contentValidator.createContentValidator(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.send).toHaveBeenCalledWith("Unexpected error");
+  });
+});
+
+describe("createContentFieldValidator", () => {
+  it("validate and call next if contentId and field are provided", () => {
+    const req = {
+      params: {
+        contentId: "contentId",
+      },
+      body: {
+        field: "field",
+      },
+    };
+
+    const res = {
+      status: jest.fn(() => res),
+      send: jest.fn(),
+    };
+
+    const next = jest.fn();
+
+    contentValidator.createContentFieldValidator(req, res, next);
+
+    expect(next).toHaveBeenCalled();
+  });
+
+  it("should throw a 400 error if contentId is not provided", () => {
+    const req = {
+      params: {},
+      body: {
+        field: "field",
+      },
+    };
+
+    const res = {
+      status: jest.fn(() => res),
+      send: jest.fn(),
+    };
+
+    const next = jest.fn();
+
+    contentValidator.createContentFieldValidator(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.send).toHaveBeenCalledWith('"contentId" is required');
+  });
+
+  it("should throw a 400 error if field is not provided", () => {
+    const req = {
+      params: {
+        contentId: "contentId",
+      },
+      body: {},
+    };
+
+    const res = {
+      status: jest.fn(() => res),
+      send: jest.fn(),
+    };
+
+    const next = jest.fn();
+
+    contentValidator.createContentFieldValidator(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.send).toHaveBeenCalledWith('"field" is required');
+  });
+
+  it("should throw a 400 error if field is not a string", () => {
+    const req = {
+      params: {
+        contentId: "contentId",
+      },
+      body: {
+        field: 123,
+      },
+    };
+
+    const res = {
+      status: jest.fn(() => res),
+      send: jest.fn(),
+    };
+
+    const next = jest.fn();
+
+    contentValidator.createContentFieldValidator(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.send).toHaveBeenCalledWith('"field" must be a string');
+  });
+
+  it("should throw a 500 error if an unexpected error occurs", () => {
+    const req = {
+      params: {
+        contentId: "contentId",
+      },
+      body: {
+        field: "field",
+      },
+    };
+
+    const res = {
+      status: jest.fn(() => res),
+      send: jest.fn(),
+    };
+
+    const next = jest.fn(() => {
+      throw new Error("Unexpected error");
+    });
+
+    contentValidator.createContentFieldValidator(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(500);
+
+    expect(res.send).toHaveBeenCalledWith("Unexpected error");
+  });
+});
+
+describe("updateContentFieldValidator", () => {
+  it("validate and call next if contentId, prevFieldValue and newFieldValue are provided", () => {
+    const req = {
+      params: {
+        contentId: "contentId",
+      },
+      body: {
+        prevFieldValue: "prevFieldValue",
+        newFieldValue: "newFieldValue",
+      },
+    };
+
+    const res = {
+      status: jest.fn(() => res),
+      send: jest.fn(),
+    };
+
+    const next = jest.fn();
+
+    contentValidator.updateContentFieldValidator(req, res, next);
+
+    expect(next).toHaveBeenCalled();
+  });
+
+  it("should throw a 400 error if contentId is not provided", () => {
+    const req = {
+      params: {},
+      body: {
+        prevFieldValue: "prevFieldValue",
+        newFieldValue: "newFieldValue",
+      },
+    };
+
+    const res = {
+      status: jest.fn(() => res),
+      send: jest.fn(),
+    };
+
+    const next = jest.fn();
+
+    contentValidator.updateContentFieldValidator(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.send).toHaveBeenCalledWith('"contentId" is required');
+  });
+
+  it("should throw a 400 error if prevFieldValue is not a string", () => {
+    const req = {
+      params: {
+        contentId: "contentId",
+      },
+      body: {
+        prevFieldValue: 123,
+        newFieldValue: "newFieldValue",
+      },
+    };
+
+    const res = {
+      status: jest.fn(() => res),
+      send: jest.fn(),
+    };
+
+    const next = jest.fn();
+
+    contentValidator.updateContentFieldValidator(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.send).toHaveBeenCalledWith('"prevFieldValue" must be a string');
+  });
+
+  it("should throw a 500 error if something unexpected happens", () => {
+    const req = {
+      params: {
+        contentId: "contentId",
+      },
+      body: {
+        prevFieldValue: "prevFieldValue",
+        newFieldValue: "newFieldValue",
+      },
+    };
+
+    const res = {
+      status: jest.fn(() => res),
+      send: jest.fn(),
+    };
+
+    const next = jest.fn(() => {
+      throw new Error("Unexpected error");
+    });
+
+    contentValidator.updateContentFieldValidator(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.send).toHaveBeenCalledWith("Unexpected error");
+  });
+});
+
+describe("deleteContentFieldValidator", () => {
+  it("validate and call next if contentId and fieldValue are provided", () => {
+    const req = {
+      params: {
+        contentId: "contentId",
+      },
+      body: {
+        fieldValue: "fieldValue",
+      },
+    };
+
+    const res = {
+      status: jest.fn(() => res),
+      send: jest.fn(),
+    };
+
+    const next = jest.fn();
+
+    contentValidator.deleteContentFieldValidator(req, res, next);
+
+    expect(next).toHaveBeenCalled();
+  });
+
+  it("should throw a 400 error if contentId is not provided", () => {
+    const req = {
+      params: {},
+      body: {
+        fieldValue: "fieldValue",
+      },
+    };
+
+    const res = {
+      status: jest.fn(() => res),
+      send: jest.fn(),
+    };
+
+    const next = jest.fn();
+
+    contentValidator.deleteContentFieldValidator(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.send).toHaveBeenCalledWith('"contentId" is required');
+  });
+
+  it("should throw a 400 error if fieldValue is not a string", () => {
+    const req = {
+      params: {
+        contentId: "contentId",
+      },
+      body: {
+        fieldValue: 123,
+      },
+    };
+
+    const res = {
+      status: jest.fn(() => res),
+      send: jest.fn(),
+    };
+
+    const next = jest.fn();
+
+    contentValidator.deleteContentFieldValidator(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.send).toHaveBeenCalledWith('"fieldValue" must be a string');
+  });
+
+  it("should throw a 500 error if something unexpected happens", () => {
+    const req = {
+      params: {
+        contentId: "contentId",
+      },
+      body: {
+        fieldValue: "fieldValue",
+      },
+    };
+
+    const res = {
+      status: jest.fn(() => res),
+      send: jest.fn(),
+    };
+
+    const next = jest.fn(() => {
+      throw new Error("Unexpected error");
+    });
+
+    contentValidator.deleteContentFieldValidator(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.send).toHaveBeenCalledWith("Unexpected error");
   });
 });
 
@@ -76,8 +393,7 @@ describe("createContentEntryValidator", () => {
         contentId: "contentId",
       },
       body: {
-        field1: "value1",
-        field2: "value2",
+        entry: "entry",
       },
     };
 
@@ -97,8 +413,7 @@ describe("createContentEntryValidator", () => {
     const req = {
       params: {},
       body: {
-        field1: "value1",
-        field2: "value2",
+        entry: "entry",
       },
     };
 
@@ -115,10 +430,13 @@ describe("createContentEntryValidator", () => {
     expect(res.send).toHaveBeenCalledWith('"contentId" is required');
   });
 
-  it("should throw a 400 error if entry is not provided", () => {
+  it("should throw a 400 error if entry is not a string", () => {
     const req = {
       params: {
         contentId: "contentId",
+      },
+      body: {
+        entry: 123,
       },
     };
 
@@ -132,15 +450,44 @@ describe("createContentEntryValidator", () => {
     contentValidator.createContentEntryValidator(req, res, next);
 
     expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.send).toHaveBeenCalledWith('"entry" is required');
+    expect(res.send).toHaveBeenCalledWith('"entry" must be a string');
   });
-});
 
-describe("getContentFieldsValidator", () => {
-  it("validate and call next if contentId is provided", () => {
+  it("should throw a 500 error if something unexpected happens", () => {
     const req = {
       params: {
         contentId: "contentId",
+      },
+      body: {
+        entry: "entry",
+      },
+    };
+
+    const res = {
+      status: jest.fn(() => res),
+      send: jest.fn(),
+    };
+
+    const next = jest.fn(() => {
+      throw new Error("Unexpected error");
+    });
+
+    contentValidator.createContentEntryValidator(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.send).toHaveBeenCalledWith("Unexpected error");
+  });
+});
+
+describe("updateContentEntryValidator", () => {
+  it("validate and call next if contentId and entryId are provided", () => {
+    const req = {
+      params: {
+        contentId: "contentId",
+        entryId: "entryId",
+      },
+      body: {
+        entry: "entry",
       },
     };
 
@@ -151,35 +498,18 @@ describe("getContentFieldsValidator", () => {
 
     const next = jest.fn();
 
-    contentValidator.getContentFieldsValidator(req, res, next);
+    contentValidator.updateContentEntryValidator(req, res, next);
 
     expect(next).toHaveBeenCalled();
   });
 
   it("should throw a 400 error if contentId is not provided", () => {
     const req = {
-      params: {},
-    };
-
-    const res = {
-      status: jest.fn(() => res),
-      send: jest.fn(),
-    };
-
-    const next = jest.fn();
-
-    contentValidator.getContentFieldsValidator(req, res, next);
-
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.send).toHaveBeenCalledWith('"contentId" is required');
-  });
-});
-
-describe("getContentEntriesValidator", () => {
-  it("validate and call next if contentId is provided", () => {
-    const req = {
       params: {
-        contentId: "contentId",
+        entryId: "entryId",
+      },
+      body: {
+        entry: "entry",
       },
     };
 
@@ -190,14 +520,20 @@ describe("getContentEntriesValidator", () => {
 
     const next = jest.fn();
 
-    contentValidator.getContentEntriesValidator(req, res, next);
+    contentValidator.updateContentEntryValidator(req, res, next);
 
-    expect(next).toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.send).toHaveBeenCalledWith('"contentId" is required');
   });
 
-  it("should throw a 400 error if contentId is not provided", () => {
+  it("should throw a 400 error if entryId is not provided", () => {
     const req = {
-      params: {},
+      params: {
+        contentId: "contentId",
+      },
+      body: {
+        entry: "entry",
+      },
     };
 
     const res = {
@@ -207,10 +543,61 @@ describe("getContentEntriesValidator", () => {
 
     const next = jest.fn();
 
-    contentValidator.getContentEntriesValidator(req, res, next);
+    contentValidator.updateContentEntryValidator(req, res, next);
 
     expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.send).toHaveBeenCalledWith('"contentId" is required');
+    expect(res.send).toHaveBeenCalledWith('"entryId" is required');
+  });
+
+  it("should throw a 400 error if entry is not a string", () => {
+    const req = {
+      params: {
+        contentId: "contentId",
+        entryId: "entryId",
+      },
+      body: {
+        entry: 123,
+      },
+    };
+
+    const res = {
+      status: jest.fn(() => res),
+      send: jest.fn(),
+    };
+
+    const next = jest.fn();
+
+    contentValidator.updateContentEntryValidator(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.send).toHaveBeenCalledWith('"entry" must be a string');
+  });
+
+  it("should throw a 500 error if something unexpected happens", () => {
+    const req = {
+      params: {
+        contentId: "contentId",
+        entryId: "entryId",
+      },
+
+      body: {
+        entry: "entry",
+      },
+    };
+
+    const res = {
+      status: jest.fn(() => res),
+      send: jest.fn(),
+    };
+
+    const next = jest.fn(() => {
+      throw new Error("Unexpected error");
+    });
+
+    contentValidator.updateContentEntryValidator(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.send).toHaveBeenCalledWith("Unexpected error");
   });
 });
 
