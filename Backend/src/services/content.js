@@ -2,19 +2,13 @@ const { Content } = require("../../database/models/index");
 const HttpError = require("../utils/errors/HttpError");
 const { v4: uuidv4 } = require("uuid");
 
-const createContent = async ({ name, fields, entries = {} }) => {
+const createContent = async ({ name, fields = {}, entries = {} }) => {
   const content = await Content.create({ name, fields, entries });
 
   return content;
 };
 
-const getContents = async () => {
-  const contents = await Content.findAll();
-
-  return contents;
-};
-
-const getContentFields = async (contentId) => {
+const createContentField = async (contentId, field) => {
   const content = await Content.findOne({
     where: {
       id: contentId,
@@ -25,7 +19,95 @@ const getContentFields = async (contentId) => {
     throw new HttpError(404, "Content not found");
   }
 
-  return content.fields;
+  const updatedContent = await Content.update(
+    {
+      fields: {
+        ...content.fields,
+        [field]: "string",
+      },
+    },
+    {
+      where: {
+        id: contentId,
+      },
+    }
+  );
+
+  return updatedContent;
+};
+
+const updateContentField = async (contentId, prevFieldValue, newFieldValue) => {
+  const content = await Content.findOne({
+    where: {
+      id: contentId,
+    },
+  });
+
+  if (!content) {
+    throw new HttpError(404, "Content not found");
+  }
+
+  const fields = Object.keys(content.fields).reduce((acc, key) => {
+    if (key === prevFieldValue) {
+      acc[newFieldValue] = content.fields[key];
+    } else {
+      acc[key] = content.fields[key];
+    }
+
+    return acc;
+  }, {});
+
+  const updatedContent = await Content.update(
+    {
+      fields,
+    },
+    {
+      where: {
+        id: contentId,
+      },
+    }
+  );
+
+  return updatedContent;
+};
+
+const deleteContentField = async (contentId, field) => {
+  const content = await Content.findOne({
+    where: {
+      id: contentId,
+    },
+  });
+
+  if (!content) {
+    throw new HttpError(404, "Content not found");
+  }
+
+  const fields = Object.keys(content.fields).reduce((acc, key) => {
+    if (key !== field) {
+      acc[key] = content.fields[key];
+    }
+
+    return acc;
+  }, {});
+
+  const updatedContent = await Content.update(
+    {
+      fields,
+    },
+    {
+      where: {
+        id: contentId,
+      },
+    }
+  );
+
+  return updatedContent;
+};
+
+const getContents = async () => {
+  const contents = await Content.findAll();
+
+  return contents;
 };
 
 const createContentEntry = async (contentId, entry) => {
@@ -58,7 +140,7 @@ const createContentEntry = async (contentId, entry) => {
   return updatedContent;
 };
 
-const getContentEntries = async (contentId) => {
+const updateContentEntry = async (contentId, entryId, field, newEntryValue) => {
   const content = await Content.findOne({
     where: {
       id: contentId,
@@ -69,7 +151,31 @@ const getContentEntries = async (contentId) => {
     throw new HttpError(404, "Content not found");
   }
 
-  return content.entries;
+  const entries = Object.keys(content.entries).reduce((acc, key) => {
+    if (key === entryId) {
+      acc[key] = {
+        ...content.entries[key],
+        [field]: newEntryValue,
+      };
+    } else {
+      acc[key] = content.entries[key];
+    }
+
+    return acc;
+  }, {});
+
+  const updatedContent = await Content.update(
+    {
+      entries,
+    },
+    {
+      where: {
+        id: contentId,
+      },
+    }
+  );
+
+  return updatedContent;
 };
 
 const deleteContentEntry = async (contentId, entryId) => {
@@ -107,9 +213,11 @@ const deleteContentEntry = async (contentId, entryId) => {
 
 module.exports = {
   createContent,
+  createContentField,
+  updateContentField,
+  deleteContentField,
   getContents,
-  getContentFields,
   createContentEntry,
-  getContentEntries,
+  updateContentEntry,
   deleteContentEntry,
 };

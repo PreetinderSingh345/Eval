@@ -18,6 +18,7 @@ function Home() {
   const [contentNames, setContentNames] = useState(null);
   const [contentFields, setContentFields] = useState(null);
   const [contentEntries, setContentEntries] = useState(null);
+  const [contentEntriesCount, setContentEntriesCount] = useState(null);
 
   const [selectedContentIndex, setSelectedContentIndex] = useState(null);
 
@@ -36,18 +37,21 @@ function Home() {
         const contentNames = [];
         const contentFields = [];
         const contentEntries = [];
+        const contentEntriesCount = [];
 
         response.forEach((content) => {
           contentIds.push(content.id);
           contentNames.push(content.name);
           contentFields.push(content.fields);
           contentEntries.push(content.entries);
+          contentEntriesCount.push(Object.keys(content.entries).length);
         });
 
         setContentIds(contentIds);
         setContentNames(contentNames);
         setContentFields(contentFields);
         setContentEntries(contentEntries);
+        setContentEntriesCount(contentEntriesCount);
       })
       .catch((error) => {
         console.error(error.message);
@@ -93,6 +97,7 @@ function Home() {
   console.log('contents', contents);
   console.log('contentNames', contentNames);
   console.log('contentEntries', contentEntries);
+  console.log('contentEntriesCount', contentEntriesCount);
 
   return (
     <main>
@@ -109,6 +114,8 @@ function Home() {
               <ContentFields
                 contentNames={contentNames}
                 contentFields={contentFields}
+                contentEntriesCount={contentEntriesCount}
+                contentIds={contentIds}
               />
             ) : (
               <ContentEntries

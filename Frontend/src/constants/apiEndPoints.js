@@ -16,6 +16,21 @@ const CREATE_CONTENT = {
   method: 'POST',
 };
 
+const CREATE_CONTENT_FIELD = (contentId) => ({
+  url: `/createContentField/${contentId}`,
+  method: 'POST',
+});
+
+const UPDATE_CONTENT_FIELD = (contentId) => ({
+  url: `/updateContentField/${contentId}`,
+  method: 'PUT',
+});
+
+const DELETE_CONTENT_FIELD = (contentId, field) => ({
+  url: `/deleteContentField/${contentId}/${field}`,
+  method: 'DELETE',
+});
+
 const CREATE_CONTENT_ENTRY = (contentId) => ({
   url: `/createContentEntry/${contentId}`,
   method: 'POST',
@@ -25,16 +40,6 @@ const GET_CONTENTS = {
   url: '/contents',
   method: 'GET',
 };
-
-const GET_CONTENT_FIELDS = (contentId) => ({
-  url: `/contentFields/${contentId}`,
-  method: 'GET',
-});
-
-const GET_CONTENT_ENTRIES = (contentId) => ({
-  url: `/contentEntries/${contentId}`,
-  method: 'GET',
-});
 
 const DELETE_CONTENT_ENTRY = (contentId, entryId) => ({
   url: `/deleteContentEntry/${contentId}/${entryId}`,
@@ -47,9 +52,10 @@ module.exports = {
   SIGNUP,
   LOGIN,
   CREATE_CONTENT,
+  CREATE_CONTENT_FIELD,
+  UPDATE_CONTENT_FIELD,
+  DELETE_CONTENT_FIELD,
   CREATE_CONTENT_ENTRY,
   GET_CONTENTS,
-  GET_CONTENT_FIELDS,
-  GET_CONTENT_ENTRIES,
   DELETE_CONTENT_ENTRY,
 };

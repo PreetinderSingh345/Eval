@@ -1,12 +1,31 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
+import {
+  BACKEND_URL,
+  CREATE_CONTENT,
+  CREATE_CONTENT_FIELD,
+  DELETE_CONTENT_FIELD,
+  UPDATE_CONTENT_FIELD,
+} from '../../constants/apiEndPoints';
+import makeRequest from '../../utils/makeRequest';
 import './ContentFields.css';
 
-function contentFields({ contentNames, contentFields }) {
-  const [type, setType] = useState('');
-  const [showFields, setShowFields] = useState(false);
+function contentFields({
+  contentNames,
+  contentFields,
+  contentEntriesCount,
+  contentIds,
+}) {
+  const navigate = useNavigate();
 
-  function handleInputChange(event) {
+  const [type, setType] = useState('');
+  const [field, setField] = useState('');
+  const [updateFieldValues, setUpdateFieldValues] = useState(null);
+  const [showFields, setShowFields] = useState(false);
+  const [selectedContentIndex, setSelectedContentIndex] = useState(null);
+
+  function handleInputChangeType(event) {
     setType(event.target.value);
   }
 
@@ -14,9 +33,112 @@ function contentFields({ contentNames, contentFields }) {
     event.preventDefault();
 
     console.log('ADD THIS TYPE', type);
+
+    makeRequest(
+      BACKEND_URL,
+      true,
+      CREATE_CONTENT,
+      {
+        data: {
+          name: type,
+        },
+      },
+      navigate
+    )
+      .then((response) => {
+        console.log('ADD THIS TYPE RESPONSE', response);
+      })
+      .catch((error) => {
+        console.error(error.message);
+      });
   }
 
-  function handleShowFields() {
+  function handleInputChangeField(event) {
+    setField(event.target.value);
+  }
+
+  function handleAddField(event) {
+    event.preventDefault();
+
+    console.log('ADD THIS FIELD', field);
+
+    makeRequest(
+      BACKEND_URL,
+      true,
+      CREATE_CONTENT_FIELD(contentIds[selectedContentIndex]),
+      {
+        data: {
+          field,
+        },
+      },
+      navigate
+    )
+      .then((response) => {
+        console.log('ADD THIS FIELD RESPONSE', response);
+      })
+      .catch((error) => {
+        console.error(error.message);
+      });
+  }
+
+  function handleRemoveField(field) {
+    console.log('REMOVE THIS FIELD', field);
+
+    makeRequest(
+      BACKEND_URL,
+      true,
+      DELETE_CONTENT_FIELD(contentIds[selectedContentIndex], field),
+      {},
+      navigate
+    )
+      .then((response) => {
+        console.log('REMOVE THIS FIELD RESPONSE', response);
+      })
+      .catch((error) => {
+        console.error(error.message);
+      });
+  }
+
+  function handleInputChangeUpdateFieldValues(event, index) {
+    const newUpdateFieldValues = [...updateFieldValues];
+
+    newUpdateFieldValues[index] = event.target.value;
+
+    setUpdateFieldValues(newUpdateFieldValues);
+  }
+
+  function handleUpdateFieldValues(event, index) {
+    event.preventDefault();
+
+    console.log('UPDATE THIS FIELD', updateFieldValues[index]);
+
+    makeRequest(
+      BACKEND_URL,
+      true,
+      UPDATE_CONTENT_FIELD(contentIds[selectedContentIndex]),
+      {
+        data: {
+          prevFieldValue: Object.keys(contentFields[selectedContentIndex])[0],
+          newFieldValue: updateFieldValues[index],
+        },
+      },
+      navigate
+    )
+      .then((response) => {
+        console.log('UPDATE THIS FIELD RESPONSE', response);
+      })
+      .catch((error) => {
+        console.error(error.message);
+      });
+  }
+
+  function handleShowFields(index) {
+    setUpdateFieldValues(new Array(contentFields[index].length).fill(''));
+
+    if (!showFields) {
+      setSelectedContentIndex(index);
+    }
+
     setShowFields(!showFields);
   }
 
@@ -28,18 +150,18 @@ function contentFields({ contentNames, contentFields }) {
           id="type"
           name="type"
           value={type}
-          onChange={handleInputChange}
+          onChange={handleInputChangeType}
         />
         <button type="submit">Add Type</button>
       </form>
 
       <div id="content-types-content-fields">
-        {contentNames.map((contentName) => {
+        {contentNames.map((contentName, index) => {
           return (
             <button
               key={uuidv4()}
               id="entries-button"
-              onClick={handleShowFields}
+              onClick={() => handleShowFields(index)}
             >
               {contentName}
             </button>
@@ -48,128 +170,57 @@ function contentFields({ contentNames, contentFields }) {
       </div>
 
       {showFields && (
-        <div id="content-fields">
-          {contentFields.map((contentField) => {
-            return 
-          })}
-        </div>
+        <>
+          <form onSubmit={handleAddField}>
+            <input
+              type="text"
+              id="field"
+              name="field"
+              value={field}
+              onChange={handleInputChangeField}
+            />
+            <button type="submit">Add Field</button>
+          </form>
+
+          <div id="content-fields">
+            {Object.keys(contentFields[selectedContentIndex]).map(
+              (contentField, index) => {
+                return (
+                  <>
+                    <div
+                      key={uuidv4()}
+                      onClick={() => handleRemoveField(contentField)}
+                    >
+                      {contentField}
+                    </div>
+
+                    {contentEntriesCount[selectedContentIndex] === 0 && (
+                      <form
+                        onSubmit={(event) =>
+                          handleUpdateFieldValues(event, index)
+                        }
+                      >
+                        <input
+                          type="text"
+                          id="update-field"
+                          name="update-field"
+                          value={updateFieldValues[index]}
+                          onChange={(event) =>
+                            handleInputChangeUpdateFieldValues(event, index)
+                          }
+                        />
+                        <button type="submit">Update Field</button>
+                      </form>
+                    )}
+                  </>
+                );
+              }
+            )}
+          </div>
+        </>
       )}
     </>
   );
 }
 
 export default contentFields;
-
-// function ContentFields(
-// {
-// contentNames,
-// contentFields,
-// handleCreateNewContent,
-//   }
-// ) {
-// const [type, setType] = useState('');
-// const [field, setField] = useState('');
-// const [fields, setFields] = useState([]);
-
-// const [selectedContentIndex, setSelectedContentIndex] = useState(null);
-// const [showContentFields, setShowContentFields] = useState(false);
-
-// const [showAddNewField, setShowAddNewField] = useState(false);
-
-// function handleShowContentFieldsClick(contentIndex) {
-//   setSelectedContentIndex(contentIndex);
-//   setShowContentFields(!showContentFields);
-// }
-
-// function handleTypeChange(event) {
-//   setType(event.target.value);
-// }
-
-// function handleTypeClick() {
-//   setShowAddNewField(true);
-// }
-
-// function handleFieldChange(event) {
-//   setField(event.target.value);
-// }
-
-// function handleFieldClick() {
-//   setFields([...fields, field]);
-// }
-
-// function handleCreateNewContentClick() {
-//   handleCreateNewContent(type, fields);
-// }
-
-// return (
-//   <h1>Content Fields</h1>
-//   // <div id="content-fields-box">
-//   //   <div id="new-content-box">
-//   //     <label htmlFor="type">NEW TYPE</label>
-//   //     <input
-//   //       type="text"
-//   //       id="type"
-//   //       value={type}
-//   //       onChange={handleTypeChange}
-//   //       placeholder={'Demo Type'}
-//   //     />
-//   //     <button onClick={handleTypeClick}>ADD</button>
-//   //   </div>
-
-//   //   {contentNames.map((contentName, contentIndex) => {
-//   //     return (
-//   //       <h1
-//   //         key={uuidv4()}
-//   //         onClick={() => handleShowContentFieldsClick(contentIndex)}
-//   //       >
-//   //         {contentName}
-//   //       </h1>
-//   //     );
-//   //   })}
-
-//   //   {showAddNewField && (
-//   //     <>
-//   //       <div id="new-field-box">
-//   //         <label htmlFor="field">NEW FIELD</label>
-//   //         <input
-//   //           type="text"
-//   //           id="field"
-//   //           value={field}
-//   //           onChange={handleFieldChange}
-//   //           placeholder={'Demo Field'}
-//   //         />
-//   //         <button onClick={handleFieldClick}>ADD</button>
-//   //       </div>
-
-//   //       <div id="new-fields">
-//   //         {fields.map((field) => {
-//   //           return (
-//   //             <div key={uuidv4()}>
-//   //               <h1>{field}</h1>
-//   //             </div>
-//   //           );
-//   //         })}
-//   //       </div>
-
-//   //       <button onClick={handleCreateNewContentClick}>SUBMIT TYPE</button>
-//   //     </>
-//   //   )}
-
-//   //   {!showAddNewField && showContentFields && (
-//   //     <div id="content-fields">
-//   //       {Object.keys(contentFields[selectedContentIndex]).map(
-//   //         (contentField) => {
-//   //           return (
-//   //             <h1 key={uuidv4()} onClick={handleShowContentFieldsClick}>
-//   //               {contentField}
-//   //             </h1>
-//   //           );
-//   //         }
-//   //       )}
-//   //     </div>
-//   //   )}
-//   // </div>
-// );
-// }
-
-// export default ContentFields;
