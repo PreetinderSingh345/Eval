@@ -8,6 +8,7 @@ import {
   GET_CONTENTS,
 } from '../../constants/apiEndPoints';
 import makeRequest from '../../utils/makeRequest';
+import './Home.css';
 
 function Home() {
   const [showContentFieldsOrEntries, setShowContentFieldsOrEntries] =

@@ -143,83 +143,87 @@ function contentFields({
   }
 
   return (
-    <>
-      <form onSubmit={handleAddType}>
-        <input
-          type="text"
-          id="type"
-          name="type"
-          value={type}
-          onChange={handleInputChangeType}
-        />
-        <button type="submit">Add Type</button>
-      </form>
+    <div id="content-fields">
+      <div id="content-fields-left">
+        <form onSubmit={handleAddType}>
+          <input
+            type="text"
+            id="type"
+            name="type"
+            value={type}
+            onChange={handleInputChangeType}
+          />
+          <button type="submit">Add Type</button>
+        </form>
 
-      <div id="content-types-content-fields">
-        {contentNames.map((contentName, index) => {
-          return (
-            <button
-              key={uuidv4()}
-              id="entries-button"
-              onClick={() => handleShowFields(index)}
-            >
-              {contentName}
-            </button>
-          );
-        })}
+        <div id="content-types-content-fields">
+          {contentNames.map((contentName, index) => {
+            return (
+              <button
+                key={uuidv4()}
+                id="entries-button"
+                onClick={() => handleShowFields(index)}
+              >
+                {contentName}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
-      {showFields && (
-        <>
-          <form onSubmit={handleAddField}>
-            <input
-              type="text"
-              id="field"
-              name="field"
-              value={field}
-              onChange={handleInputChangeField}
-            />
-            <button type="submit">Add Field</button>
-          </form>
+      <div id="content-fields-right">
+        {showFields && (
+          <>
+            <form onSubmit={handleAddField}>
+              <input
+                type="text"
+                id="field"
+                name="field"
+                value={field}
+                onChange={handleInputChangeField}
+              />
+              <button type="submit">Add Field</button>
+            </form>
 
-          <div id="content-fields">
-            {Object.keys(contentFields[selectedContentIndex]).map(
-              (contentField, index) => {
-                return (
-                  <>
-                    <div
-                      key={uuidv4()}
-                      onClick={() => handleRemoveField(contentField)}
-                    >
-                      {contentField}
-                    </div>
-
-                    {contentEntriesCount[selectedContentIndex] === 0 && (
-                      <form
-                        onSubmit={(event) =>
-                          handleUpdateFieldValues(event, index)
-                        }
+            <div id="content-fields">
+              {Object.keys(contentFields[selectedContentIndex]).map(
+                (contentField, index) => {
+                  return (
+                    <>
+                      <div
+                        key={uuidv4()}
+                        onClick={() => handleRemoveField(contentField)}
                       >
-                        <input
-                          type="text"
-                          id="update-field"
-                          name="update-field"
-                          value={updateFieldValues[index]}
-                          onChange={(event) =>
-                            handleInputChangeUpdateFieldValues(event, index)
+                        {contentField}
+                      </div>
+
+                      {contentEntriesCount[selectedContentIndex] === 0 && (
+                        <form
+                          onSubmit={(event) =>
+                            handleUpdateFieldValues(event, index)
                           }
-                        />
-                        <button type="submit">Update Field</button>
-                      </form>
-                    )}
-                  </>
-                );
-              }
-            )}
-          </div>
-        </>
-      )}
-    </>
+                        >
+                          <input
+                            type="text"
+                            id="update-field"
+                            name="update-field"
+                            value={updateFieldValues[index]}
+                            onChange={(event) =>
+                              handleInputChangeUpdateFieldValues(event, index)
+                            }
+                          />
+                          <button type="submit">Update Field</button>
+                        </form>
+                      )}
+                    </>
+                  );
+                }
+              )}
+            </div>
+          </>
+        )}
+      </div>
+    </div>
   );
 }
 

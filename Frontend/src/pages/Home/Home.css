@@ -1,0 +1,14 @@
+main {
+  width: 100vh;
+  height: 100vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+#content-fields-entries {
+  width: 75%;
+  height: 100vh;
+  display: flex;
+  justify-content: space-around;
+}

@@ -39,7 +39,7 @@ function ContentEntries({
   }
 
   return (
-    <>
+    <div id="content-entries">
       <form onSubmit={handleAddEntry}>
         {Object.keys(fields).map((field, index) => (
           <div key={uuidv4()}>
@@ -67,7 +67,7 @@ function ContentEntries({
               {Object.keys(entries[key]).map((entryKey) => {
                 return (
                   <div key={uuidv4()}>
-                    <h1>{entries[key][entryKey]}</h1>
+                    <h3>{entries[key][entryKey]}</h3>
                   </div>
                 );
               })}
@@ -75,7 +75,7 @@ function ContentEntries({
           );
         })}
       </div>
-    </>
+    </div>
   );
 }
 

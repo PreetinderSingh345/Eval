@@ -20,6 +20,8 @@ function SideBar({
 
   return (
     <div id="sidebar">
+      <h2>CMS+</h2>
+      
       <div>COLLECTION TYPES</div>
 
       <div id="content-types-sidebar">
