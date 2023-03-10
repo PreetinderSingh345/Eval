@@ -31,33 +31,41 @@ function Login() {
   };
 
   return (
-    <>
-      <h1>Login</h1>
+    <div className="signup-login-container">
+      <h3>Login to your CMS+ Account</h3>
 
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="email">Email</label>
+      <form onSubmit={handleSubmit} className="signup-login-form">
+        <label htmlFor="email" className="signup-login-label">
+          Email
+        </label>
         <input
           type="email"
           name="email"
           id="email"
           value={formData.email}
           onChange={handleChange}
+          className="signup-login-input"
         />
 
-        <label htmlFor="password">Password</label>
+        <label htmlFor="password" className="signup-login-label">
+          Password
+        </label>
         <input
           type="password"
           name="password"
           id="password"
           value={formData.password}
           onChange={handleChange}
+          className="signup-login-input"
         />
 
-        <button type="submit">Login</button>
+        <button type="submit" className="signup-login-button">
+          Login
+        </button>
       </form>
 
-      <p>{formResponse}</p>
-    </>
+      <p className="form-response">{formResponse}</p>
+    </div>
   );
 }
 
