@@ -74,6 +74,8 @@ function ContentFieldsPage() {
       });
   }
 
+  function handleDeleteContent() {}
+
   console.log('contents', contents);
   console.log('contentNames', contentNames);
   console.log('contentFields', contentFields);
@@ -93,6 +95,7 @@ function ContentFieldsPage() {
               contentNames={contentNames}
               contentFields={contentFields}
               handleCreateNewContent={handleCreateNewContent}
+              handleDeleteContent={handleDeleteContent}
             />
           )}
         </>

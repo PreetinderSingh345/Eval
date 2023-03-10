@@ -5,17 +5,9 @@ import {
   ERROR_ROUTE,
   SIGNUP_ROUTE,
   LOGIN_ROUTE,
-  CONTENT_FIELDS,
-  CONTENT_ENTRIES,
+  HOME_ROUTE,
 } from './constants/routes';
-import {
-  Error,
-  PageNotFound,
-  SignupPage,
-  LoginPage,
-  ContentFieldsPage,
-  ContentEntriesPage,
-} from './pages';
+import { Error, PageNotFound, SignupPage, LoginPage, Home } from './pages';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -35,15 +27,7 @@ function App() {
         <Route path={SIGNUP_ROUTE} element={<SignupPage />} />
         <Route path={LOGIN_ROUTE} element={<LoginPage />} />
 
-        {isAuthenticated && (
-          <>
-            <Route path={CONTENT_FIELDS} element={<ContentFieldsPage />} />
-            <Route
-              path={`${CONTENT_ENTRIES}/:contentId`}
-              element={<ContentEntriesPage />}
-            />
-          </>
-        )}
+        {isAuthenticated && <Route path={HOME_ROUTE} element={<Home />} />}
 
         <Route path="*" element={<PageNotFound />} />
       </Routes>
